@@ -5,7 +5,7 @@ import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.json.JSONObject;
-import shippo.sync.tookan.constant.TookanConfig;
+import shippo.sync.tookan.global.TookanConfig;
 import shippo.sync.tookan.entity.TookanAgentInfo;
 
 import javax.ws.rs.core.Response;
@@ -81,7 +81,7 @@ public class AgentApi {
         return fleed_id;
     }
 
-    public boolean updateAgent(TookanAgentInfo tookanAgent) throws Exception {
+    public static boolean updateAgent(TookanAgentInfo tookanAgent) throws Exception {
         boolean success = false;
 
         if (tookanAgent.getFleetId() == null) return false;

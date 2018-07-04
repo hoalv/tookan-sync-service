@@ -1,4 +1,4 @@
-package shippo.sync.tookan.constant;
+package shippo.sync.tookan.global;
 
 import java.util.HashMap;
 import java.util.Map;

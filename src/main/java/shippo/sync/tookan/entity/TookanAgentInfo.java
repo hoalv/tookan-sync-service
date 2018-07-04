@@ -1,22 +1,53 @@
 package shippo.sync.tookan.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class TookanAgentInfo implements Serializable {
+
+    @SerializedName("fleet_id")
     private Integer fleetId;
+
+    @SerializedName("password")
     private String password;
+
+    @SerializedName("username")
     private String userName;
+
+    @SerializedName("name")
     private String name;
+
+    @SerializedName("email")
     private String email;
+
+    @SerializedName("team_id")
     private String teamId;
+
+    @SerializedName("transport_type")
     private String transportType;
+
+    @SerializedName("first_name")
     private String firstName;
+
+    @SerializedName("last_name")
     private String lastName;
+
+    @SerializedName("transport_desc")
     private String transportDesc;
+
+    @SerializedName("phone")
     private String phone;
+
+    @SerializedName("license")
     private String license;
+
+    @SerializedName("timezone")
     private String timezone;
+
+    @SerializedName("color")
     private String color;
+
 
 
 

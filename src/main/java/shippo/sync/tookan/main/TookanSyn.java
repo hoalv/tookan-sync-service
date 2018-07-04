@@ -1,11 +1,15 @@
 package shippo.sync.tookan.main;
 
+import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import shippo.sync.tookan.constant.KafkaRef;
+import shippo.sync.tookan.entity.TookanAgentInfo;
+import shippo.sync.tookan.global.Utils;
 import shippo.sync.tookan.kafka.KafkaProducer;
 import shippo.sync.tookan.kafka.SingleConsumer;
+import shippo.sync.tookan.tookanapi.AgentApi;
 
 import java.io.File;
 import java.io.FileReader;
@@ -43,35 +47,60 @@ public class TookanSyn {
                 ,brokerList, listTopic, kafkaGroup, nOfThread);
 
         //tao producer test
-        KafkaProducer producer1 = new KafkaProducer("hello", "192.168.10.210:9092");
-        producer1.pushMsg("hello".getBytes());
-        List<Integer> listMsg = new ArrayList<>();
-        for(int i = 0; i < 100; i++){
-            listMsg.add(i);
+        String topic = properties.getProperty("kafka.tookanagent.topic");
+        KafkaProducer producer1 = new KafkaProducer(topic, "192.168.10.210:9092");
+
+        String data = "";
+        Gson gson = new Gson();
+        try {
+            currentPath = new File(".").getCanonicalPath();
+            confPath = currentPath + "/msgsample/msg-updateagent.txt";
+            data = Utils.readFileToString(confPath);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int counter = 0;
-                while ( counter < listMsg.size()){
-                    try {
-                        Thread.sleep(200l);
-                        String message = listMsg.get(counter)+"";
-                        producer1.pushMsg(message.getBytes());
-                        counter++;
-                    }catch (Exception ex){
-                        LOG.error("Cant sent message {} ",ex);
-                    }
-                }
-            }
-        }).start();
+        producer1.pushMsg(data.getBytes());
+
+
         new SingleConsumer(brokerList, kafkaGroup, listTopic, nOfThread) {
             @Override
             public void processMsg(ConsumerRecord<byte[], byte[]> record)
             {
-                if(KafkaRef.topicMapper.containsKey(record.topic())) {
-                    System.out.println(new String(record.value()));
+//                System.out.println(new String(record.value()));
+//                String msgReceive = new String(record.value());
+//                LOG.info(msgReceive);
+                Gson gson = new Gson();
+
+                String data = new String(record.value());
+                System.out.println(data);
+                JSONObject msg = new JSONObject(data);
+                String action = String.valueOf(msg.get("action"));
+                JSONObject agent = msg.getJSONObject("agent");
+                TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
+
+                switch(action){
+                    case "c" :
+                        Integer fleet_id = null;
+                        try {
+                            fleet_id = AgentApi.insertAgent(tookanAgentInfo);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "u" :
+                        if(tookanAgentInfo.getFleetId() != null){
+                            Boolean checkUpdate = false;
+                            try {
+                                checkUpdate = AgentApi.updateAgent(tookanAgentInfo);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    default :
+                        System.out.println("Action not support!");
 
                 }
             }

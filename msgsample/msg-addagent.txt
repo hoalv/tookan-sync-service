@@ -1,0 +1,19 @@
+{
+    "action": "c",
+    "agent":{
+        "email": "leviethoa@shippo.vn",
+        "name": "Patil",
+        "phone": "0123789456",
+        "transport_type": "2",
+        "transport_desc": "auto",
+        "license": "demo",
+        "color": "blue",
+        "timezone": "-430",
+        "team_id": "10566",
+        "password": "abcdefg",
+        "username": "viethoa",
+        "first_name": "hoa",
+        "last_name": "le viet"
+    }
+
+}

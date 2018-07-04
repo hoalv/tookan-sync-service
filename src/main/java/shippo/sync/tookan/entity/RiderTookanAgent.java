@@ -2,16 +2,14 @@ package shippo.sync.tookan.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+@SuppressWarnings("JpaQlInspection")
 @Entity
 @Table(name = "tookan_agents")
+@NamedQuery(name="RiderTookanAgent.findAll", query="SELECT t FROM RiderTookanAgent t")
 public class RiderTookanAgent implements Serializable {
 
     @Id
