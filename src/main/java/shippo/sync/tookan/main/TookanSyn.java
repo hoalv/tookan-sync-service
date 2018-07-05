@@ -5,7 +5,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import shippo.sync.tookan.entity.RiderTookanAgent;
 import shippo.sync.tookan.entity.TookanAgentInfo;
+import shippo.sync.tookan.entitymanager.RiderTookanAgentManager;
+import shippo.sync.tookan.entitymanager.TeamManager;
 import shippo.sync.tookan.global.Utils;
 import shippo.sync.tookan.kafka.KafkaProducer;
 import shippo.sync.tookan.kafka.SingleConsumer;
@@ -14,6 +17,7 @@ import shippo.sync.tookan.tookanapi.AgentApi;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,41 +72,76 @@ public class TookanSyn {
             @Override
             public void processMsg(ConsumerRecord<byte[], byte[]> record)
             {
-//                System.out.println(new String(record.value()));
-//                String msgReceive = new String(record.value());
-//                LOG.info(msgReceive);
                 Gson gson = new Gson();
+                try {
 
-                String data = new String(record.value());
-                System.out.println(data);
-                JSONObject msg = new JSONObject(data);
-                String action = String.valueOf(msg.get("action"));
-                JSONObject agent = msg.getJSONObject("agent");
-                TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
+                    String data = new String(record.value());
+                    System.out.println(data);
+                    JSONObject msg = new JSONObject(data);
+                    String action = String.valueOf(msg.get("action"));
+                    String rider_id = "123";
+                    JSONObject agent = msg.getJSONObject("agent");
+                    TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
 
-                switch(action){
-                    case "c" :
-                        Integer fleet_id = null;
-                        try {
-                            fleet_id = AgentApi.insertAgent(tookanAgentInfo);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case "u" :
-                        if(tookanAgentInfo.getFleetId() != null){
-                            Boolean checkUpdate = false;
+                    tookanAgentInfo.setTimezone("-430");
+                    tookanAgentInfo.setTransportType("2");
+                    tookanAgentInfo.setTransportDesc("");
+                    tookanAgentInfo.setLicense("");
+
+                    if(tookanAgentInfo.getTeamId() != null){
+                        int shippo_team = Integer.parseInt(tookanAgentInfo.getTeamId());
+
+                        TeamManager teamManager = new TeamManager();
+                        teamManager.setup();
+                        int tookan_team = teamManager.getTeamById(shippo_team).getTookanId();
+                        tookanAgentInfo.setTeamId(tookan_team + "");
+                        teamManager.exit();
+                    }
+
+                    switch(action){
+                        case "c" :
+                            Integer fleet_id = null;
                             try {
-                                checkUpdate = AgentApi.updateAgent(tookanAgentInfo);
+                                fleet_id = AgentApi.insertAgent(tookanAgentInfo);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        }
-                        break;
-                    default :
-                        System.out.println("Action not support!");
 
+                            RiderTookanAgentManager manager = new RiderTookanAgentManager();
+                            RiderTookanAgent riderTookanAgent = new RiderTookanAgent();
+                            riderTookanAgent.setAgent(tookanAgentInfo.getUserName());
+                            riderTookanAgent.setAgentId(fleet_id);
+                            riderTookanAgent.setRiderId(Integer.parseInt(rider_id));
+                            riderTookanAgent.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+                            riderTookanAgent.setVersion(0);
+
+                            manager.setup();
+                            Long tookan_agent_id = manager.addRiderTookanAgent(riderTookanAgent);
+                            System.out.println("insert ok!");
+                            manager.exit();
+                            break;
+                        case "u" :
+                            RiderTookanAgentManager manager1 = new RiderTookanAgentManager();
+                            manager1.setup();
+                            tookanAgentInfo.setFleetId(manager1.readByAgent(tookanAgentInfo.getUserName()).getAgentId());
+                            manager1.exit();
+                            if(tookanAgentInfo.getFleetId() != null){
+                                Boolean checkUpdate = false;
+                                try {
+                                    checkUpdate = AgentApi.updateAgent(tookanAgentInfo);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            break;
+                        default :
+                            System.out.println("Action not support!");
+
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
             }
         };
     }
