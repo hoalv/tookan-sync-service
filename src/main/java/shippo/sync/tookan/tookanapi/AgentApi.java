@@ -4,6 +4,7 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import shippo.sync.tookan.global.TookanConfig;
 import shippo.sync.tookan.entity.TookanAgentInfo;
@@ -74,8 +75,8 @@ public class AgentApi {
         if (jsonObject.getInt("status") == 200) {
             System.out.println("Create tookan agent successful!");
             fleed_id = ((JSONObject) jsonObject.get("data")).getInt("fleet_id");
-        }
-//        System.out.println(jsonObject);
+        }else
+            System.out.println(jsonObject);
         httpClient.stop();
 
         return fleed_id;
@@ -161,7 +162,47 @@ public class AgentApi {
         return success;
     }
 
-//    public static void main(String argv[]){
+    public static TookanAgentInfo getAgentByFleetId(String fleet_id) throws Exception {
+
+
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        HttpClient httpClient = new HttpClient(sslContextFactory);
+        httpClient.setConnectTimeout(10000);
+        httpClient.start();
+
+        Fields fields = new Fields();
+        Fields.Field api_key = new Fields.Field("api_key", TookanConfig.API_KEY);
+        Fields.Field fleetId = new Fields.Field("fleet_id", fleet_id);
+
+        fields.put(fleetId);
+        fields.put(api_key);
+
+        ContentResponse response = httpClient.FORM(TookanConfig.AGENT_GET_URL, fields);
+        JSONObject jsonObject = new JSONObject(response.getContentAsString());
+        JSONArray agentArray = jsonObject.getJSONArray("data");
+        JSONObject jsonAgent = agentArray.getJSONObject(0);
+
+        TookanAgentInfo agent = new TookanAgentInfo();
+//        agent.setName(jsonAgent.getString("name"));
+//        agent.setColor(jsonAgent.getString("fleet_status_color"));
+        agent.setEmail(jsonAgent.getString("email"));
+        agent.setPhone(jsonAgent.getString("phone"));
+//        agent.setFirstName(jsonAgent.getString(""));
+//        agent.setLastName("viet");
+//        agent.setLicense(jsonAgent.getString("license"));
+        agent.setTeamId(jsonAgent.getInt("team_id")+"");
+//        agent.setTransportType(jsonAgent.getString("transport_type"));
+//        agent.setTransportDesc(jsonAgent.getString("transport_desc"));
+
+        if (jsonObject.getInt("status") == 200) {
+            System.out.println(jsonObject);
+            System.out.println(" Tookan agent get done!");
+        }
+//        System.out.println(jsonObject);
+        httpClient.stop();
+        return agent;
+    }
+    public static void main(String argv[]){
 //        TookanAgentInfo agent = new TookanAgentInfo();
 //        agent.setName("Patil");
 //        agent.setColor("blue");
@@ -183,6 +224,11 @@ public class AgentApi {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-//
-//    }
+
+        try {
+            AgentApi.getAgentByFleetId("139388");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

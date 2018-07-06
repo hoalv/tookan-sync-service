@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class TookanAgentInfo implements Serializable {
 
-    @SerializedName("fleet_id")
+    @SerializedName("fleetId")
     private Integer fleetId;
 
     @SerializedName("password")
@@ -21,19 +21,19 @@ public class TookanAgentInfo implements Serializable {
     @SerializedName("email")
     private String email;
 
-    @SerializedName("team_id")
+    @SerializedName("teamId")
     private String teamId;
 
-    @SerializedName("transport_type")
+    @SerializedName("transportType")
     private String transportType;
 
-    @SerializedName("first_name")
+    @SerializedName("firstName")
     private String firstName;
 
-    @SerializedName("last_name")
+    @SerializedName("lastName")
     private String lastName;
 
-    @SerializedName("transport_desc")
+    @SerializedName("transportDesc")
     private String transportDesc;
 
     @SerializedName("phone")
