@@ -41,7 +41,7 @@ public class TookanAgentParser extends SingleConsumer {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(fleet_id == null)return;
+                    if(fleet_id == null) return;
 
                     RiderTookanAgentManager manager = new RiderTookanAgentManager();
                     RiderTookanAgent riderTookanAgent = new RiderTookanAgent();
@@ -54,7 +54,8 @@ public class TookanAgentParser extends SingleConsumer {
                     //add an agent on Tookan
                     manager.setup();
                     Long tookan_agent_id = manager.addRiderTookanAgent(riderTookanAgent);
-                    System.out.println("insert ok!");
+                    if(tookan_agent_id != null)
+                        System.out.println("Insert tookan_agents ok!");
                     manager.exit();
                     break;
                 }
@@ -95,7 +96,8 @@ public class TookanAgentParser extends SingleConsumer {
         String rider_id = String.valueOf(agent.get("id"));
         TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
 
-        tookanAgentInfo.setPhone(agent.getString("mobile"));
+        if(agent.has("mobile"))
+            tookanAgentInfo.setPhone(agent.getString("mobile"));
         tookanAgentInfo.setTimezone("-430");
         tookanAgentInfo.setTransportType("2");
         tookanAgentInfo.setTransportDesc("");
@@ -114,6 +116,7 @@ public class TookanAgentParser extends SingleConsumer {
             TeamManager teamManager = new TeamManager();
             teamManager.setup();
             int tookan_team = teamManager.getTeamById(shippo_team).getTookanId();
+//            int tookan_team = 10566;
             tookanAgentInfo.setTeamId(tookan_team + "");
             teamManager.exit();
         }
