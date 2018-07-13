@@ -73,7 +73,7 @@ public class AgentApi {
         ContentResponse response = httpClient.FORM(TookanConfig.AGENT_ADD_URL, fields);
         JSONObject jsonObject = new JSONObject(response.getContentAsString());
         if (jsonObject.getInt("status") == 200) {
-            System.out.println("Create tookan agent successful!");
+            System.out.println(jsonObject.getString("message"));
             fleed_id = ((JSONObject) jsonObject.get("data")).getInt("fleet_id");
         }else
             System.out.println(jsonObject);
@@ -154,7 +154,7 @@ public class AgentApi {
         ContentResponse response = httpClient.FORM(TookanConfig.AGENT_EDIT_URL, fields);
         JSONObject jsonObject = new JSONObject(response.getContentAsString());
         if (jsonObject.getInt("status") == 200) {
-            System.out.println(" Tookan agent have been updated!");
+            System.out.println(jsonObject.getString("message"));
             success = true;
         }
 //        System.out.println(jsonObject);
@@ -202,6 +202,37 @@ public class AgentApi {
         httpClient.stop();
         return agent;
     }
+
+    public static boolean updateBlockStatusOfAgent(int feet_id, int block_status) throws Exception {
+        boolean success = false;
+
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        HttpClient httpClient = new HttpClient(sslContextFactory);
+        httpClient.setConnectTimeout(10000);
+        httpClient.start();
+
+        Fields fields = new Fields();
+        Fields.Field api_key = new Fields.Field("api_key", TookanConfig.API_KEY);
+        Fields.Field fleetId = new Fields.Field("fleet_id", String.valueOf(feet_id));
+        Fields.Field blockStatus = new Fields.Field("block_status", String.valueOf(block_status));
+
+        fields.put(fleetId);
+        fields.put(api_key);
+        fields.put(blockStatus);
+
+
+        ContentResponse response = httpClient.FORM(TookanConfig.AGENT_BLOCK_URL , fields);
+        JSONObject jsonObject = new JSONObject(response.getContentAsString());
+        System.out.println(jsonObject);
+        if (jsonObject.getInt("status") == 200) {
+            System.out.println(jsonObject.getString("message"));
+//            System.out.println(jsonObject);
+            success = true;
+        }
+//        System.out.println(jsonObject);
+        httpClient.stop();
+        return success;
+    }
     public static void main(String argv[]){
 //        TookanAgentInfo agent = new TookanAgentInfo();
 //        agent.setName("Patil");
@@ -226,7 +257,8 @@ public class AgentApi {
 //        }
 
         try {
-            AgentApi.getAgentByFleetId("139388");
+//            AgentApi.getAgentByFleetId("139388");
+            AgentApi.updateBlockStatusOfAgent(18894, -1);
         } catch (Exception e) {
             e.printStackTrace();
         }

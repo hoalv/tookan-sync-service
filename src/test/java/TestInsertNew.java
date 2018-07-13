@@ -35,10 +35,10 @@ public class TestInsertNew {
         try {
             currentPath = new File(".").getCanonicalPath();
 
-//            //test insert
+//            //test update
 //            confPath = currentPath + "/msgsample/msg-updateagent.txt";
 
-            //test update
+            //test insert
             confPath = currentPath + "/msgsample/msg-addagent.txt";
 
             data = Utils.readFileToString(confPath);
@@ -96,6 +96,12 @@ public class TestInsertNew {
         }else {
             Assert.assertTrue(false);
         }
+
+
+    }
+
+    @Test
+    public void testUpdateBlockStatusTookanAgent(){
 
 
     }

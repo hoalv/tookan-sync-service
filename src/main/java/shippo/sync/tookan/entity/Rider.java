@@ -18,8 +18,11 @@ public class Rider implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private Integer id;
+    @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(name = "avatar")
     private String avatar;
 
     @Column(name="created_at")
@@ -28,22 +31,6 @@ public class Rider implements Serializable {
 
     @Column(name="username")
     private String username;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     @Column(name="email")
     private String email;
@@ -56,12 +43,14 @@ public class Rider implements Serializable {
     @SerializedName("last_name")
     private String lastName;
 
+    @Column(name = "mobile")
     private String mobile;
 
     @Column(name="nick_name")
     @SerializedName("nick_name")
     private String nickName;
 
+    @Column(name = "state")
     private String state;
 
     @Column(name="tag_line")
@@ -80,16 +69,17 @@ public class Rider implements Serializable {
     @SerializedName("user_id")
     private Integer userId;
 
+    @Column(name = "version")
     private Integer version;
 
     public Rider() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -187,6 +177,22 @@ public class Rider implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 }

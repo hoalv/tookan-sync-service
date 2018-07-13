@@ -1,0 +1,9 @@
+{
+    "action": "b",
+    "type": "Rider",
+    "data":{
+        "id": "7",
+        "state": "ACTIVE"
+    }
+
+}

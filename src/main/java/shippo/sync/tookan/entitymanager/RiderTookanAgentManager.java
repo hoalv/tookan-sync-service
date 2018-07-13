@@ -33,17 +33,17 @@ public class RiderTookanAgentManager {
         sessionFactory.close();
     }
 
-
-
-    public void readAll() {
+    public RiderTookanAgent readByAgent(String agent) {
+        // code to get book list
         Session session = sessionFactory.openSession();
         Transaction tx = null;
+        RiderTookanAgent riderTookanAgent = null;
         try {
             tx = session.beginTransaction();
 
-            List tasks = (List) session.createQuery("FROM RiderTookanAgent").list();
-            for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
-                RiderTookanAgent riderTookanAgent = (RiderTookanAgent) iterator.next();
+            List tasks = (List) session.createQuery("FROM RiderTookanAgent T WHERE T.agent = '" + agent + "'").list();
+            for (Iterator iterator = tasks.iterator(); iterator.hasNext(); ) {
+                riderTookanAgent = (RiderTookanAgent) iterator.next();
                 System.out.println("rider_id: " + riderTookanAgent.getRiderId());
                 System.out.println("agent: " + riderTookanAgent.getAgent());
             }
@@ -55,10 +55,10 @@ public class RiderTookanAgentManager {
         } finally {
             session.close();
         }
-
+        return riderTookanAgent;
     }
 
-    public RiderTookanAgent readByAgent(String agent) {
+    public RiderTookanAgent readByRiderId(int rider_id) {
         // code to get book list
         Session session = sessionFactory.openSession();
         Transaction tx = null;
@@ -66,10 +66,9 @@ public class RiderTookanAgentManager {
         try {
             tx = session.beginTransaction();
 
-            List tasks = (List) session.createQuery("FROM RiderTookanAgent T WHERE T.agent = '" + agent + "'").list();
-            for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
+            List tasks = (List) session.createQuery("FROM RiderTookanAgent T WHERE T.riderId =" + rider_id ).list();
+            for (Iterator iterator = tasks.iterator(); iterator.hasNext(); ) {
                 riderTookanAgent = (RiderTookanAgent) iterator.next();
-                System.out.println("rider_id: " + riderTookanAgent.getRiderId());
                 System.out.println("agent: " + riderTookanAgent.getAgent());
             }
             tx.commit();
@@ -103,7 +102,7 @@ public class RiderTookanAgentManager {
     }
 
     /* Method to CREATE an tookan_agents in the database */
-    public Long addRiderTookanAgent(RiderTookanAgent agent){
+    public Long addRiderTookanAgent(RiderTookanAgent agent) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         Long agentId = null;
@@ -113,7 +112,7 @@ public class RiderTookanAgentManager {
             agentId = (Long) session.save(agent);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             e.printStackTrace();
         } finally {
             session.close();
@@ -122,13 +121,13 @@ public class RiderTookanAgentManager {
     }
 
     /* Method to UPDATE  for an tookan_agents */
-    public void updateRiderTookanAgent(Integer id, RiderTookanAgent changedAgent ){
+    public void updateRiderTookanAgent(Integer id, RiderTookanAgent changedAgent) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
 
         try {
             tx = session.beginTransaction();
-            RiderTookanAgent agent = (RiderTookanAgent)session.get(RiderTookanAgent.class, id);
+            RiderTookanAgent agent = (RiderTookanAgent) session.get(RiderTookanAgent.class, id);
             agent.setAgent(changedAgent.getAgent());
             agent.setAgentId(changedAgent.getAgentId());
             agent.setRiderId(changedAgent.getRiderId());
@@ -137,31 +136,13 @@ public class RiderTookanAgentManager {
             session.update(agent);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             e.printStackTrace();
         } finally {
             session.close();
         }
     }
 
-    public void delete(long taskId) {
-        // code to remove a task
-        Session session = sessionFactory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            RiderTookanAgent task = (RiderTookanAgent) session.get(RiderTookanAgent.class, taskId);
-            session.delete(task);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null)
-                tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-
-    }
     public static void main(String[] args) {
         // code to run the program
         RiderTookanAgentManager manager = new RiderTookanAgentManager();
@@ -180,7 +161,7 @@ public class RiderTookanAgentManager {
 ////        System.out.println("OK: " + a);
 //        manager.updateRiderTookanAgent(4, agent);
 //        System.out.println("OK!");
-        manager.readByAgent("hoalv");
+        RiderTookanAgent rider = manager.readByRiderId(379);
 //        manager.readById(4);
         manager.exit();
     }
