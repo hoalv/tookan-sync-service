@@ -1,9 +1,7 @@
 package shippo.sync.tookan.entity;
 
-import com.google.gson.annotations.SerializedName;
-
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 
@@ -18,68 +16,52 @@ public class Rider implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @Column(name = "avatar")
     private String avatar;
 
     @Column(name="created_at")
-    @SerializedName("created_at")
     private Timestamp createdAt;
 
-    @Column(name="username")
-    private String username;
-
-    @Column(name="email")
     private String email;
 
     @Column(name="first_name")
-    @SerializedName("first_name")
     private String firstName;
 
     @Column(name="last_name")
-    @SerializedName("last_name")
     private String lastName;
 
-    @Column(name = "mobile")
     private String mobile;
 
     @Column(name="nick_name")
-    @SerializedName("nick_name")
     private String nickName;
 
-    @Column(name = "state")
     private String state;
 
     @Column(name="tag_line")
-    @SerializedName("tag_line")
     private String tagLine;
 
     @Column(name="team_id")
-    @SerializedName("team_id")
     private Integer teamId;
 
     @Column(name="updated_at")
-    @SerializedName("updated_at")
     private Timestamp updatedAt;
 
     @Column(name="user_id")
-    @SerializedName("user_id")
     private Integer userId;
 
-    @Column(name = "version")
+    private String username;
+
     private Integer version;
 
     public Rider() {
     }
 
-    public Long getId() {
+    public Integer getId() {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -97,6 +79,14 @@ public class Rider implements Serializable {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFirstName() {
@@ -171,28 +161,20 @@ public class Rider implements Serializable {
         this.userId = userId;
     }
 
-    public Integer getVersion() {
-        return this.version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public Integer getVersion() {
+        return this.version;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
 }

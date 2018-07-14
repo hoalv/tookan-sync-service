@@ -68,6 +68,8 @@ public class TookanAgentParser extends SingleConsumer {
                     if (manager1.readByAgent(tookanAgentInfo.getUserName()) != null) {
                         fleet_id = manager1.readByAgent(tookanAgentInfo.getUserName()).getAgentId();
                     }
+
+                    manager1.exit();
                     if (agent.has("state")) {
 //                  update status block/unblock agent on tookan
                         Integer block_status = -1;
@@ -82,8 +84,8 @@ public class TookanAgentParser extends SingleConsumer {
                             Boolean checkBlock = AgentApi.updateBlockStatusOfAgent(fleet_id, block_status);
                         }
                     }else{
+//                        update agent on Tookan
                         tookanAgentInfo.setFleetId(fleet_id);
-                        //update agent on Tookan
                         if (tookanAgentInfo.getFleetId() != null) {
                             Boolean checkUpdate = false;
                             try {
@@ -94,7 +96,6 @@ public class TookanAgentParser extends SingleConsumer {
                         }
                     }
 
-                    manager1.exit();
                     break;
                 }
                 default: {

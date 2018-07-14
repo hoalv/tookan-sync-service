@@ -1,0 +1,62 @@
+{
+	"action": "u",
+	"type": "tranportation_tasks",
+	"data":{
+	        "tookanJobId": "17709028",
+	        "id": 97712,
+        	"teamId": "10566",
+        	"autoAssignment": "0",
+        	"description": "giao hang trong vong 3 ngay",
+        	"pickupContactPhone": "+1201555555",
+        	"pickupContactName": "viethoa",
+        	"pickupContactEmail": "",
+        	"pickupFullAddress": "1 pham hung",
+        	"pickupBefore": "2018-08-02T07:15:37.681Z",
+        	"deliverContactEmail": "john@example.com",
+        	"deliverContactName": "Viet Hoa",
+        	"deliverContactPhone": "+12015555555",
+        	"deliverFullAddress": "4 trai ca truong dinh HN",
+        	"latitude": "30.7188978",
+        	"longitude": "76.810298",
+        	"deliverBefore": "2018-09-02T07:15:37.681Z",
+        	"type":"DELIVER",
+        	"layout_type": "0",
+        	"timezone": "-330",
+        	"custom_field_template": "Template_1",
+        	"meta_data": [
+        		{
+        			"label": "Price",
+        			"data": "100"
+        		},
+        		{
+        			"label": "Quantity",
+        			"data": "100"
+        		}
+        	],
+        	"pickup_custom_field_template": "Template_2",
+        	"pickup_meta_data": [
+        		{
+        			"label": "Price",
+        			"data": "100"
+        		},
+        		{
+        			"label": "Quantity",
+        			"data": "100"
+        		}
+        	],
+        	"fleetId": "",
+        	"p_ref_images": [
+        		"http://tookanapp.com/wp-content/uploads/2015/11/logo_dark.png",
+        		"http://tookanapp.com/wp-content/uploads/2015/11/logo_dark.png"
+        	],
+        	"ref_images": [
+        		"http://tookanapp.com/wp-content/uploads/2015/11/logo_dark.png",
+        		"http://tookanapp.com/wp-content/uploads/2015/11/logo_dark.png"
+        	],
+        	"notify": 1,
+        	"tags": "",
+        	"geofence": 0,
+        	"ride_type": 0
+	}
+
+}

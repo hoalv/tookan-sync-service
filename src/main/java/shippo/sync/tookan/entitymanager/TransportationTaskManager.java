@@ -6,12 +6,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import shippo.sync.tookan.entity.RiderTookanAgent;
-import shippo.sync.tookan.entity.Team;
+import shippo.sync.tookan.entity.TransportationTask;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class TeamManager {
+public class TransportationTaskManager {
     protected SessionFactory sessionFactory;
 
     public void setup() {
@@ -34,19 +34,15 @@ public class TeamManager {
         sessionFactory.close();
     }
 
-    public void readByTookanId(int tookanId) {
-        // code to get book list
+
+    public void readById(long id) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            TransportationTask task = (TransportationTask) session.get(TransportationTask.class, id);
 
-            List teams = (List) session.createQuery("FROM Team T WHERE T.tookanId = " + tookanId).list();
-            for (Iterator iterator = teams.iterator(); iterator.hasNext(); ) {
-                Team team = (Team) iterator.next();
-                System.out.println("name: " + team.getName());
-                System.out.println("description: " + team.getDescription());
-            }
+            System.out.print("description: " + task.getDescription());
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null)
@@ -55,36 +51,57 @@ public class TeamManager {
         } finally {
             session.close();
         }
-
     }
 
-    public Team getTeamById(long id) {
+    /* Method to CREATE an tookan_agents in the database */
+    public Long addRiderTookanAgent(RiderTookanAgent agent) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
-        Team team = null;
+        Long agentId = null;
+
         try {
             tx = session.beginTransaction();
-            team = (Team) session.get(Team.class, id);
-            System.out.println(team.getName());
+            agentId = (Long) session.save(agent);
             tx.commit();
         } catch (HibernateException e) {
-            if (tx != null)
-                tx.rollback();
+            if (tx != null) tx.rollback();
             e.printStackTrace();
         } finally {
             session.close();
         }
+        return agentId;
+    }
 
-        return team;
+    /* Method to UPDATE  for an tookan_agents */
+    public void updateRiderTookanAgent(Integer id, RiderTookanAgent changedAgent) {
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            RiderTookanAgent agent = (RiderTookanAgent) session.get(RiderTookanAgent.class, id);
+            agent.setAgent(changedAgent.getAgent());
+            agent.setAgentId(changedAgent.getAgentId());
+            agent.setRiderId(changedAgent.getRiderId());
+            agent.setUpdatedAt(changedAgent.getUpdatedAt());
+            agent.setVersion(changedAgent.getVersion());
+            session.update(agent);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
     }
 
     public static void main(String[] args) {
         // code to run the program
-        TeamManager manager = new TeamManager();
+        TransportationTaskManager manager = new TransportationTaskManager();
         manager.setup();
-//        manager.readByTookanId(2);
-//        manager.readAll();
-        manager.getTeamById(Long.parseLong("109"));
+
+        manager.readById(97712);
+//        manager.readById(4);
         manager.exit();
     }
 }

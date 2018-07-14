@@ -10,5 +10,7 @@
 
         <mapping class="shippo.sync.tookan.entity.RiderTookanAgent" />
         <mapping class="shippo.sync.tookan.entity.Team" />
+        <mapping class="shippo.sync.tookan.entity.Rider" />
+        <mapping class="shippo.sync.tookan.entity.TransportationTask" />
     </session-factory>
 </hibernate-configuration>

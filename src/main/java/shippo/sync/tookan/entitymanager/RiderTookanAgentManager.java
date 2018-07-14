@@ -161,7 +161,7 @@ public class RiderTookanAgentManager {
 ////        System.out.println("OK: " + a);
 //        manager.updateRiderTookanAgent(4, agent);
 //        System.out.println("OK!");
-        RiderTookanAgent rider = manager.readByRiderId(379);
+        RiderTookanAgent rider = manager.readByRiderId(7);
 //        manager.readById(4);
         manager.exit();
     }

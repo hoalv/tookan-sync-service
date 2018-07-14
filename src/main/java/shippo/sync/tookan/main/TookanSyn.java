@@ -109,6 +109,7 @@ public class TookanSyn {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            if (fleet_id == null) return;
 
                             RiderTookanAgentManager manager = new RiderTookanAgentManager();
                             RiderTookanAgent riderTookanAgent = new RiderTookanAgent();
@@ -121,7 +122,8 @@ public class TookanSyn {
                             //add an agent on Tookan
                             manager.setup();
                             Long tookan_agent_id = manager.addRiderTookanAgent(riderTookanAgent);
-                            System.out.println("insert ok!");
+                            if (tookan_agent_id != null)
+                                System.out.println("Insert tookan_agents ok!");
                             manager.exit();
                             break;
                         case "u" :
@@ -134,6 +136,7 @@ public class TookanSyn {
                                 fleet_id = manager1.readByAgent(tookanAgentInfo.getUserName()).getAgentId();
                             }
 
+                            manager1.exit();
                             if (agent.has("state")) {
 //                                update status block/unblock agent on tookan
                                 Integer block_status = -1;
@@ -160,7 +163,7 @@ public class TookanSyn {
                                 }
                             }
 
-                            manager1.exit();
+
 
                             break;
 
