@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import shippo.sync.tookan.entity.RiderTookanAgent;
+import shippo.sync.tookan.entity.v0.RiderTookanAgent;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,10 +17,10 @@ public class RiderTookanAgentManager {
         // code to load Hibernate Session factory
         // final StandardServiceRegistry registry = new
         // StandardServiceRegistryBuilder()
-        // .configure() // configures settings from hibernate.cfg.xml
+        // .configure() // configures settings from hibernate_rider_service.cfg.xml
         // .build();
         try {
-            sessionFactory = new Configuration().configure().buildSessionFactory();
+            sessionFactory = new Configuration().configure("hibernate_rider_service.cfg.xml").buildSessionFactory();
 
         } catch (Throwable ex) {
             ex.printStackTrace();

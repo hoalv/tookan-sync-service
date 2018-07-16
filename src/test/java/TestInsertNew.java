@@ -1,11 +1,9 @@
 import jdk.jfr.Description;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
-import shippo.sync.tookan.entity.RiderTookanAgent;
-import shippo.sync.tookan.entity.TookanAgentInfo;
+import shippo.sync.tookan.entity.v0.RiderTookanAgent;
+import shippo.sync.tookan.entity.tookan.TookanAgentInfo;
 import shippo.sync.tookan.entitymanager.RiderTookanAgentManager;
 import shippo.sync.tookan.entitymanager.TeamManager;
 import shippo.sync.tookan.global.Utils;

@@ -5,12 +5,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import shippo.sync.tookan.entity.v0.Rider;
+import shippo.sync.tookan.entity.v0.Team;
+import shippo.sync.tookan.entity.v1.Users;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class RiderManager {
+public class UsersManager {
     protected SessionFactory sessionFactory;
 
     public void setup() {
@@ -20,7 +21,7 @@ public class RiderManager {
         // .configure() // configures settings from hibernate_rider_service.cfg.xml
         // .build();
         try {
-            sessionFactory = new Configuration().configure("hibernate_rider_service.cfg.xml").buildSessionFactory();
+            sessionFactory = new Configuration().configure("shippo_vn_1905.cfg.xml").buildSessionFactory();
 
         } catch (Throwable ex) {
             ex.printStackTrace();
@@ -33,18 +34,18 @@ public class RiderManager {
         sessionFactory.close();
     }
 
-    public Rider getRiderById(int id) {
+    public void readByTookanId(int tookanId) {
         // code to get book list
         Session session = sessionFactory.openSession();
         Transaction tx = null;
-        Rider rider = null;
         try {
             tx = session.beginTransaction();
 
-            List tasks = (List) session.createQuery("FROM Rider T WHERE T.id =" + id ).list();
-            for (Iterator iterator = tasks.iterator(); iterator.hasNext(); ) {
-                rider = (Rider) iterator.next();
-                System.out.println("email: " + rider.getEmail());
+            List teams = (List) session.createQuery("FROM Team T WHERE T.tookanId = " + tookanId).list();
+            for (Iterator iterator = teams.iterator(); iterator.hasNext(); ) {
+                Team team = (Team) iterator.next();
+                System.out.println("name: " + team.getName());
+                System.out.println("description: " + team.getDescription());
             }
             tx.commit();
         } catch (HibernateException e) {
@@ -54,34 +55,36 @@ public class RiderManager {
         } finally {
             session.close();
         }
-        return rider;
+
     }
 
-//    public Rider getRiderById(long id) {
-//        Session session = sessionFactory.openSession();
-//        Transaction tx = null;
-//        Rider rider = null;
-//        try {
-//            tx = session.beginTransaction();
-//            rider = (Rider) session.get(Rider.class, id);
-//            tx.commit();
-//        } catch (HibernateException e) {
-//            if (tx != null)
-//                tx.rollback();
-//            e.printStackTrace();
-//        } finally {
-//            session.close();
-//        }
-//
-//        return rider;
-//    }
+    public Users getUserById(long id) {
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+        Users user = null;
+        try {
+            tx = session.beginTransaction();
+            user = (Users) session.get(Users.class, id);
+            System.out.println(user.getUsername());
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return user;
+    }
 
     public static void main(String[] args) {
         // code to run the program
-        RiderManager manager = new RiderManager();
+        UsersManager manager = new UsersManager();
         manager.setup();
-        Rider rider = manager.getRiderById(660);
-        System.out.println(rider.getEmail());
+//        manager.readByTookanId(2);
+//        manager.readAll();
+        manager.getUserById(52);
         manager.exit();
     }
 }

@@ -7,7 +7,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import shippo.sync.tookan.global.TookanConfig;
-import shippo.sync.tookan.entity.TookanAgentInfo;
+import shippo.sync.tookan.entity.tookan.TookanAgentInfo;
 
 import javax.ws.rs.core.Response;
 

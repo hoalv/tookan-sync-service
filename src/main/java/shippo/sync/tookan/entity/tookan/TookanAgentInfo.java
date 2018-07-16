@@ -1,4 +1,4 @@
-package shippo.sync.tookan.entity;
+package shippo.sync.tookan.entity.tookan;
 
 import com.google.gson.annotations.SerializedName;
 

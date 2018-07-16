@@ -1,4 +1,4 @@
-package shippo.sync.tookan.entity;
+package shippo.sync.tookan.entity.v0;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -137,7 +137,7 @@ public class TransportationTask implements Serializable {
 
     @Column(name = "metadata")
     @SerializedName("metadata")
-    private Object metadata;
+    private String metadata;
 
     @Column(name = "note")
     @SerializedName("note")
@@ -193,7 +193,7 @@ public class TransportationTask implements Serializable {
 
     @Column(name="reason_code")
     @SerializedName("reasonCode")
-    private Object reasonCode;
+    private String reasonCode;
 
     @Column(name="recipient_pay_courier_fee")
     @SerializedName("recipientPayCourierFee")
@@ -478,11 +478,11 @@ public class TransportationTask implements Serializable {
         this.merchantId = merchantId;
     }
 
-    public Object getMetadata() {
+    public String getMetadata() {
         return this.metadata;
     }
 
-    public void setMetadata(Object metadata) {
+    public void setMetadata(String metadata) {
         this.metadata = metadata;
     }
 
@@ -590,11 +590,11 @@ public class TransportationTask implements Serializable {
         this.realCod = realCod;
     }
 
-    public Object getReasonCode() {
+    public String getReasonCode() {
         return this.reasonCode;
     }
 
-    public void setReasonCode(Object reasonCode) {
+    public void setReasonCode(String reasonCode) {
         this.reasonCode = reasonCode;
     }
 

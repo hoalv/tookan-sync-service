@@ -1,4 +1,4 @@
-package shippo.sync.tookan.entity;
+package shippo.sync.tookan.entity.v0;
 
 import java.io.Serializable;
 import javax.persistence.*;

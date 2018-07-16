@@ -8,9 +8,9 @@
         <property name="hibernate.connection.username">postgres</property>
         <property name="show_sql">true</property>
 
-        <mapping class="shippo.sync.tookan.entity.RiderTookanAgent" />
-        <mapping class="shippo.sync.tookan.entity.Team" />
-        <mapping class="shippo.sync.tookan.entity.Rider" />
-        <mapping class="shippo.sync.tookan.entity.TransportationTask" />
+        <mapping class="shippo.sync.tookan.entity.v0.RiderTookanAgent" />
+        <mapping class="shippo.sync.tookan.entity.v0.Team" />
+        <mapping class="shippo.sync.tookan.entity.v0.Rider" />
+        <mapping class="shippo.sync.tookan.entity.v0.TransportationTask" />
     </session-factory>
 </hibernate-configuration>
