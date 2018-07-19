@@ -7,13 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import shippo.sync.tookan.entity.v0.RiderTookanAgent;
 import shippo.sync.tookan.entity.tookan.TookanAgentInfo;
-import shippo.sync.tookan.entitymanager.RiderManager;
 import shippo.sync.tookan.entitymanager.RiderTookanAgentManager;
 import shippo.sync.tookan.entitymanager.TeamManager;
 import shippo.sync.tookan.global.Utils;
 import shippo.sync.tookan.kafka.KafkaProducer;
 import shippo.sync.tookan.kafka.SingleConsumer;
 import shippo.sync.tookan.tookanapi.AgentApi;
+import shippo.sync.tookan.tookanapi.TookanAgentParser;
 
 import java.io.File;
 import java.io.FileReader;
@@ -50,139 +50,133 @@ public class TookanSyn {
         LOG.info("Loaded oauth configuration: brokerList - {},topics - {}, kafkaGroup - {}, nOThread - {} "
                 ,brokerList, listTopic, kafkaGroup, nOfThread);
 
-        //tao producer test
-        String topic = properties.getProperty("kafka.tookanagent.topic");
-        KafkaProducer producer1 = new KafkaProducer(topic, "192.168.10.210:9092");
-
-        String data = "";
-        Gson gson = new Gson();
-        try {
-            currentPath = new File(".").getCanonicalPath();
-            confPath = currentPath + "/msgsample/msg-updateagent.txt";
-            data = Utils.readFileToString(confPath);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        producer1.pushMsg(data.getBytes());
-
-
-        new SingleConsumer(brokerList, kafkaGroup, listTopic, nOfThread) {
-            @Override
-            public void processMsg(ConsumerRecord<byte[], byte[]> record)
-            {
-                Gson gson = new Gson();
-                String data = new String(record.value());
-                System.out.println(data);
-                try {
-
-                    System.out.println(data);
-                    JSONObject msg = new JSONObject(data);
-                    String action = String.valueOf(msg.get("action"));
-                    JSONObject agent = msg.getJSONObject("data");
-                    String rider_id = null;
-                    if(agent.has("id"))
-                        rider_id = String.valueOf(agent.get("id")) ;
-                    else{
-                        RiderManager riderManager = new RiderManager();
-                        riderManager.setup();
-                        rider_id = riderManager.getRiderByUserId(agent.getInt("userId")).getId() +"";
-                        riderManager.exit();
-                    }
-                    TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
-
-                    tookanAgentInfo.setTimezone("-430");
-                    tookanAgentInfo.setTransportType("2");
-                    tookanAgentInfo.setTransportDesc("");
-                    tookanAgentInfo.setLicense("");
-
-                    //lay tookan_id tu bang team
-                    if(tookanAgentInfo.getTeamId() != null){
-                        int shippo_team = Integer.parseInt(tookanAgentInfo.getTeamId());
-
-                        TeamManager teamManager = new TeamManager();
-                        teamManager.setup();
-                        int tookan_team = teamManager.getTeamById(shippo_team).getTookanId();
-                        tookanAgentInfo.setTeamId(tookan_team + "");
-                        teamManager.exit();
-                    }
-
-                    switch(action){
-                        case "c" :
-                            Integer fleet_id = null;
-                            try {
-                                fleet_id = AgentApi.insertAgent(tookanAgentInfo);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (fleet_id == null) return;
-
-                            RiderTookanAgentManager manager = new RiderTookanAgentManager();
-                            RiderTookanAgent riderTookanAgent = new RiderTookanAgent();
-                            riderTookanAgent.setAgent(tookanAgentInfo.getUserName());
-                            riderTookanAgent.setAgentId(fleet_id);
-                            riderTookanAgent.setRiderId(Integer.parseInt(rider_id));
-                            riderTookanAgent.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-                            riderTookanAgent.setVersion(0);
-
-                            //add an agent on Tookan
-                            manager.setup();
-                            Long tookan_agent_id = manager.addRiderTookanAgent(riderTookanAgent);
-                            if (tookan_agent_id != null)
-                                System.out.println("Insert tookan_agents ok!");
-                            manager.exit();
-                            break;
-                        case "u" :
-                            RiderTookanAgentManager manager1 = new RiderTookanAgentManager();
-                            fleet_id = null;
-                            manager1.setup();
-
-//                    read fleet_id from table tookan_agents (= agent_id)
-                            if (manager1.readByAgent(tookanAgentInfo.getUserName()) != null) {
-                                fleet_id = manager1.readByAgent(tookanAgentInfo.getUserName()).getAgentId();
-                            }
-
-                            manager1.exit();
-                            if (agent.has("state")) {
-//                                update status block/unblock agent on tookan
-                                Integer block_status = -1;
-                                String state = (String) agent.get("state");
-                                if (state.equals("ACTIVE")) {
-                                    block_status = 1;
-                                } else if (state.equals("INACTIVE")) {
-                                    block_status = 0;
-                                }
-                                //read fleet_id
-                                if (fleet_id != null) {
-                                    Boolean checkBlock = AgentApi.updateBlockStatusOfAgent(fleet_id, block_status);
-                                }
-                            }else{
-                                tookanAgentInfo.setFleetId(fleet_id);
-                                //update agent on Tookan
-                                if (tookanAgentInfo.getFleetId() != null) {
-                                    Boolean checkUpdate = false;
-                                    try {
-                                        checkUpdate = AgentApi.updateAgent(tookanAgentInfo);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            break;
-
-                        default :
-                            System.out.println("Action not support!");
-                            break;
-
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        };
-//        new TookanAgentParser(brokerList, kafkaGroup, listTopic, nOfThread);
+//        //tao producer test
+//        String topic = properties.getProperty("kafka.tookanagent.topic");
+//        KafkaProducer producer1 = new KafkaProducer(topic, "192.168.10.210:9092");
+//
+//        String data = "";
+//        Gson gson = new Gson();
+//        try {
+//            currentPath = new File(".").getCanonicalPath();
+//            confPath = currentPath + "/msgsample/msg-updateagent.txt";
+//            data = Utils.readFileToString(confPath);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        producer1.pushMsg(data.getBytes());
+//
+//
+//        new SingleConsumer(brokerList, kafkaGroup, listTopic, nOfThread) {
+//            @Override
+//            public void processMsg(ConsumerRecord<byte[], byte[]> record)
+//            {
+//                Gson gson = new Gson();
+//                String data = new String(record.value());
+//                System.out.println(data);
+//                try {
+//
+//                    System.out.println(data);
+//                    JSONObject msg = new JSONObject(data);
+//                    String action = String.valueOf(msg.get("action"));
+//                    JSONObject agent = msg.getJSONObject("data");
+//                    String rider_id = String.valueOf(agent.get("id")) ;
+//                    TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
+//
+//                    tookanAgentInfo.setTimezone("-430");
+//                    tookanAgentInfo.setTransportType("2");
+//                    tookanAgentInfo.setTransportDesc("");
+//                    tookanAgentInfo.setLicense("");
+//
+//                    //lay tookan_id tu bang team
+//                    if(tookanAgentInfo.getTeamId() != null){
+//                        int shippo_team = Integer.parseInt(tookanAgentInfo.getTeamId());
+//
+//                        TeamManager teamManager = new TeamManager();
+//                        teamManager.setup();
+//                        int tookan_team = teamManager.getTeamById(shippo_team).getTookanId();
+//                        tookanAgentInfo.setTeamId(tookan_team + "");
+//                        teamManager.exit();
+//                    }
+//
+//                    switch(action){
+//                        case "c" :
+//                            Integer fleet_id = null;
+//                            try {
+//                                fleet_id = AgentApi.insertAgent(tookanAgentInfo);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                            if (fleet_id == null) return;
+//
+//                            RiderTookanAgentManager manager = new RiderTookanAgentManager();
+//                            RiderTookanAgent riderTookanAgent = new RiderTookanAgent();
+//                            riderTookanAgent.setAgent(tookanAgentInfo.getUserName());
+//                            riderTookanAgent.setAgentId(fleet_id);
+//                            riderTookanAgent.setRiderId(Integer.parseInt(rider_id));
+//                            riderTookanAgent.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+//                            riderTookanAgent.setVersion(0);
+//
+//                            //add an agent on Tookan
+//                            manager.setup();
+//                            Long tookan_agent_id = manager.addRiderTookanAgent(riderTookanAgent);
+//                            if (tookan_agent_id != null)
+//                                System.out.println("Insert tookan_agents ok!");
+//                            manager.exit();
+//                            break;
+//                        case "u" :
+//                            RiderTookanAgentManager manager1 = new RiderTookanAgentManager();
+//                            fleet_id = null;
+//                            manager1.setup();
+//
+////                    read fleet_id from table tookan_agents (= agent_id)
+//                            if (manager1.readByAgent(tookanAgentInfo.getUserName()) != null) {
+//                                fleet_id = manager1.readByAgent(tookanAgentInfo.getUserName()).getAgentId();
+//                            }
+//
+//                            manager1.exit();
+//                            if (agent.has("state")) {
+////                                update status block/unblock agent on tookan
+//                                Integer block_status = -1;
+//                                String state = (String) agent.get("state");
+//                                if (state.equals("ACTIVE")) {
+//                                    block_status = 1;
+//                                } else if (state.equals("INACTIVE")) {
+//                                    block_status = 0;
+//                                }
+//                                //read fleet_id
+//                                if (fleet_id != null) {
+//                                    Boolean checkBlock = AgentApi.updateBlockStatusOfAgent(fleet_id, block_status);
+//                                }
+//                            }else{
+//                                tookanAgentInfo.setFleetId(fleet_id);
+//                                //update agent on Tookan
+//                                if (tookanAgentInfo.getFleetId() != null) {
+//                                    Boolean checkUpdate = false;
+//                                    try {
+//                                        checkUpdate = AgentApi.updateAgent(tookanAgentInfo);
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//
+//
+//
+//                            break;
+//
+//                        default :
+//                            System.out.println("Action not support!");
+//                            break;
+//
+//                    }
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        };
+        new TookanAgentParser(brokerList, kafkaGroup, listTopic, nOfThread);
     }
 }
