@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.json.JSONObject;
 import shippo.sync.tookan.entity.v0.RiderTookanAgent;
 import shippo.sync.tookan.entity.tookan.TookanAgentInfo;
+import shippo.sync.tookan.entitymanager.RiderManager;
 import shippo.sync.tookan.entitymanager.RiderTookanAgentManager;
 import shippo.sync.tookan.entitymanager.TeamManager;
 import shippo.sync.tookan.kafka.SingleConsumer;
@@ -31,7 +32,15 @@ public class TookanAgentParser extends SingleConsumer {
             JSONObject msg = new JSONObject(data);
             String action = String.valueOf(msg.get("action"));
             JSONObject agent = msg.getJSONObject("data");
-            String rider_id = String.valueOf(agent.get("id"));
+            String rider_id = null;
+            if (agent.has("id"))
+                String.valueOf(agent.get("id"));
+            else {
+                RiderManager riderManager = new RiderManager();
+                riderManager.setup();
+                rider_id = riderManager.getRiderByUserId(agent.getInt("userId")).getId() + "";
+                riderManager.exit();
+            }
 
             switch (action) {
                 case CREATE: {
@@ -83,7 +92,7 @@ public class TookanAgentParser extends SingleConsumer {
                         if (fleet_id != null) {
                             Boolean checkBlock = AgentApi.updateBlockStatusOfAgent(fleet_id, block_status);
                         }
-                    }else{
+                    } else {
 //                        update agent on Tookan
                         tookanAgentInfo.setFleetId(fleet_id);
                         if (tookanAgentInfo.getFleetId() != null) {
