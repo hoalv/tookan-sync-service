@@ -57,6 +57,30 @@ public class RiderManager {
         return rider;
     }
 
+    public Rider getRiderByUserId(int id) {
+        // code to get book list
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+        Rider rider = null;
+        try {
+            tx = session.beginTransaction();
+
+            List tasks = (List) session.createQuery("FROM Rider T WHERE T.user_id =" + id ).list();
+            for (Iterator iterator = tasks.iterator(); iterator.hasNext(); ) {
+                rider = (Rider) iterator.next();
+                System.out.println("email: " + rider.getEmail());
+            }
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return rider;
+    }
+
 //    public Rider getRiderById(long id) {
 //        Session session = sessionFactory.openSession();
 //        Transaction tx = null;
