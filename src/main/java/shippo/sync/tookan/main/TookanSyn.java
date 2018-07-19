@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import shippo.sync.tookan.entity.v0.RiderTookanAgent;
 import shippo.sync.tookan.entity.tookan.TookanAgentInfo;
+import shippo.sync.tookan.entitymanager.RiderManager;
 import shippo.sync.tookan.entitymanager.RiderTookanAgentManager;
 import shippo.sync.tookan.entitymanager.TeamManager;
 import shippo.sync.tookan.global.Utils;
@@ -80,7 +81,15 @@ public class TookanSyn {
                     JSONObject msg = new JSONObject(data);
                     String action = String.valueOf(msg.get("action"));
                     JSONObject agent = msg.getJSONObject("data");
-                    String rider_id = String.valueOf(agent.get("id")) ;
+                    String rider_id = null;
+                    if(agent.has("id"))
+                        rider_id = String.valueOf(agent.get("id")) ;
+                    else{
+                        RiderManager riderManager = new RiderManager();
+                        riderManager.setup();
+                        rider_id = riderManager.getRiderByUserId(agent.getInt("userId")).getId() +"";
+                        riderManager.exit();
+                    }
                     TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
 
                     tookanAgentInfo.setTimezone("-430");
@@ -160,8 +169,6 @@ public class TookanSyn {
                                     }
                                 }
                             }
-
-
 
                             break;
 
