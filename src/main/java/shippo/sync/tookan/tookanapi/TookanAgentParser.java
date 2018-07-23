@@ -34,7 +34,7 @@ public class TookanAgentParser extends SingleConsumer {
             JSONObject agent = msg.getJSONObject("data");
             String rider_id = null;
             if (agent.has("id"))
-                String.valueOf(agent.get("id"));
+                rider_id = String.valueOf(agent.get("id"));
             else {
                 RiderManager riderManager = new RiderManager();
                 riderManager.setup();
