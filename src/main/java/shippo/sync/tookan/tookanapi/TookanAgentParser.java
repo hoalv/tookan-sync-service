@@ -10,6 +10,7 @@ import shippo.sync.tookan.entitymanager.RiderTookanAgentManager;
 import shippo.sync.tookan.entitymanager.TeamManager;
 import shippo.sync.tookan.kafka.SingleConsumer;
 
+import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -24,23 +25,26 @@ public class TookanAgentParser extends SingleConsumer {
 
     @Override
     public void processMsg(ConsumerRecord<byte[], byte[]> record) {
-        String data = new String(record.value());
+        String data = new String(record.value(), Charset.forName("UTF-8"));
         System.out.println(data);
         try {
             TookanAgentInfo tookanAgentInfo = mapKafkaMsgToTookanAgentInfo(data);
-//            System.out.println(data);
             JSONObject msg = new JSONObject(data);
             String action = String.valueOf(msg.get("action"));
             JSONObject agent = msg.getJSONObject("data");
             String rider_id = null;
-            if (agent.has("id"))
+            if(agent.has("userId")){
+                rider_id = agent.getInt("userId") + "";
+
+            }
+            /*if (agent.has("id"))
                 rider_id = String.valueOf(agent.get("id"));
             else {
                 RiderManager riderManager = new RiderManager();
                 riderManager.setup();
                 rider_id = riderManager.getRiderByUserId(agent.getInt("userId")).getId() + "";
                 riderManager.exit();
-            }
+            }*/
 
             switch (action) {
                 case CREATE: {
@@ -59,8 +63,7 @@ public class TookanAgentParser extends SingleConsumer {
                     riderTookanAgent.setRiderId(Integer.parseInt(rider_id));
                     riderTookanAgent.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
                     riderTookanAgent.setVersion(0);
-
-                    //add an agent on Tookan
+//                    add an agent on Tookan
                     manager.setup();
                     Long tookan_agent_id = manager.addRiderTookanAgent(riderTookanAgent);
                     if (tookan_agent_id != null)
@@ -123,12 +126,11 @@ public class TookanAgentParser extends SingleConsumer {
         System.out.println(data);
         JSONObject msg = new JSONObject(data);
         JSONObject agent = msg.getJSONObject("data");
-        String rider_id = String.valueOf(agent.get("id"));
         TookanAgentInfo tookanAgentInfo = gson.fromJson(String.valueOf(agent), TookanAgentInfo.class);
 
         if (agent.has("mobile"))
             tookanAgentInfo.setPhone(agent.getString("mobile"));
-        tookanAgentInfo.setTimezone("-430");
+        tookanAgentInfo.setTimezone("-420");
         tookanAgentInfo.setTransportType("2");
         tookanAgentInfo.setTransportDesc("");
         tookanAgentInfo.setLicense("");
@@ -139,14 +141,13 @@ public class TookanAgentParser extends SingleConsumer {
         tookanAgentInfo.setLastName(tookanAgentInfo.getLastName() != null
                 ? tookanAgentInfo.getLastName() : "");
 
-        //lay tookan_id tu bang team
+//        lay tookan_id tu bang team
         if (tookanAgentInfo.getTeamId() != null) {
             int shippo_team = Integer.parseInt(tookanAgentInfo.getTeamId());
 
             TeamManager teamManager = new TeamManager();
             teamManager.setup();
             int tookan_team = teamManager.getTeamById(shippo_team).getTookanId();
-//            int tookan_team = 10566;
             tookanAgentInfo.setTeamId(tookan_team + "");
             teamManager.exit();
         }

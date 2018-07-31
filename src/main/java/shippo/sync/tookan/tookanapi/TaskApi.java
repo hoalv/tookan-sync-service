@@ -177,7 +177,7 @@ public class TaskApi {
             fields.put(customerAddress);
         }
         if (tookanTask.getCustomer_email() != null) {
-            Fields.Field customerAddress = new Fields.Field("customer_address", tookanTask.getCustomer_email());
+            Fields.Field customerAddress = new Fields.Field("customer_email", tookanTask.getCustomer_email());
             fields.put(customerAddress);
         }
         if (tookanTask.getJob_delivery_datetime() != null) {
