@@ -55,10 +55,6 @@ public class TookanAgentParser extends SingleConsumer {
                     }
                     if (fleet_id == null) return;
 
-                    riderManager.setup();
-                    riderManager.updateIsSyncTookan(Long.parseLong(rider_id), true);
-                    riderManager.exit();
-
                     RiderTookanAgentManager manager = new RiderTookanAgentManager();
                     RiderTookanAgent riderTookanAgent = new RiderTookanAgent();
                     riderTookanAgent.setAgent(tookanAgentInfo.getUserName());
@@ -69,8 +65,12 @@ public class TookanAgentParser extends SingleConsumer {
 //                    add an agent on Tookan
                     manager.setup();
                     Long tookan_agent_id = manager.addRiderTookanAgent(riderTookanAgent);
-                    if (tookan_agent_id != null)
+                    if (tookan_agent_id != null){
+                        riderManager.setup();
+                        riderManager.updateIsSyncTookan(Long.parseLong(rider_id), true);
+                        riderManager.exit();
                         System.out.println("Insert tookan_agents ok!");
+                    }
                     manager.exit();
                     break;
                 }
