@@ -16,7 +16,7 @@ public class Rider implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private Integer id;
+    private Long id;
 
     private String avatar;
 
@@ -52,16 +52,19 @@ public class Rider implements Serializable {
 
     private String username;
 
+    @Column(name = "is_synced_tookan")
+    private Boolean isSyncedTookan;
+
     private Integer version;
 
     public Rider() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -175,6 +178,14 @@ public class Rider implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public Boolean getIsSyncedTookan() {
+        return isSyncedTookan;
+    }
+
+    public void setIsSyncedTookan(Boolean syncedTookan) {
+        isSyncedTookan = syncedTookan;
     }
 
 }

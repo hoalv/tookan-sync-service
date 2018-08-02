@@ -3,6 +3,7 @@ package shippo.sync.tookan.tookanapi;
 import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.json.JSONObject;
+import shippo.sync.tookan.entity.v0.Rider;
 import shippo.sync.tookan.entity.v0.RiderTookanAgent;
 import shippo.sync.tookan.entity.tookan.TookanAgentInfo;
 import shippo.sync.tookan.entitymanager.RiderManager;
@@ -32,19 +33,17 @@ public class TookanAgentParser extends SingleConsumer {
             JSONObject msg = new JSONObject(data);
             String action = String.valueOf(msg.get("action"));
             JSONObject agent = msg.getJSONObject("data");
-            String rider_id = null;
+            String rider_id_in_tookan_agents = null;
             if(agent.has("userId")){
-                rider_id = agent.getInt("userId") + "";
+                rider_id_in_tookan_agents = agent.getInt("userId") + "";
 
             }
-            /*if (agent.has("id"))
+
+            String rider_id = null;
+            RiderManager riderManager = new RiderManager();
+            Rider rider = new Rider();
+            if (agent.has("id"))
                 rider_id = String.valueOf(agent.get("id"));
-            else {
-                RiderManager riderManager = new RiderManager();
-                riderManager.setup();
-                rider_id = riderManager.getRiderByUserId(agent.getInt("userId")).getId() + "";
-                riderManager.exit();
-            }*/
 
             switch (action) {
                 case CREATE: {
@@ -56,11 +55,15 @@ public class TookanAgentParser extends SingleConsumer {
                     }
                     if (fleet_id == null) return;
 
+                    riderManager.setup();
+                    riderManager.updateIsSyncTookan(Long.parseLong(rider_id), true);
+                    riderManager.exit();
+
                     RiderTookanAgentManager manager = new RiderTookanAgentManager();
                     RiderTookanAgent riderTookanAgent = new RiderTookanAgent();
                     riderTookanAgent.setAgent(tookanAgentInfo.getUserName());
                     riderTookanAgent.setAgentId(fleet_id);
-                    riderTookanAgent.setRiderId(Integer.parseInt(rider_id));
+                    riderTookanAgent.setRiderId(Integer.parseInt(rider_id_in_tookan_agents));
                     riderTookanAgent.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
                     riderTookanAgent.setVersion(0);
 //                    add an agent on Tookan
@@ -92,8 +95,15 @@ public class TookanAgentParser extends SingleConsumer {
                             block_status = 0;
                         }
                         //read fleet_id
+                        Boolean checkBlock = false;
                         if (fleet_id != null) {
-                            Boolean checkBlock = AgentApi.updateBlockStatusOfAgent(fleet_id, block_status);
+                            checkBlock = AgentApi.updateBlockStatusOfAgent(fleet_id, block_status);
+                        }
+                        // rider already update on tookan
+                        if(checkBlock){
+                            riderManager.setup();
+                            riderManager.updateIsSyncTookan(Long.parseLong(rider_id), true);
+                            riderManager.exit();
                         }
                     } else {
 //                        update agent on Tookan
@@ -104,6 +114,12 @@ public class TookanAgentParser extends SingleConsumer {
                                 checkUpdate = AgentApi.updateAgent(tookanAgentInfo);
                             } catch (Exception e) {
                                 e.printStackTrace();
+                            }
+                            // rider already update on tookan
+                            if(checkUpdate){
+                                riderManager.setup();
+                                riderManager.updateIsSyncTookan(Long.parseLong(rider_id), true);
+                                riderManager.exit();
                             }
                         }
                     }
