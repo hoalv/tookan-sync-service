@@ -14,11 +14,6 @@ public class RiderManager {
     protected SessionFactory sessionFactory;
 
     public void setup() {
-        // code to load Hibernate Session factory
-        // final StandardServiceRegistry registry = new
-        // StandardServiceRegistryBuilder()
-        // .configure() // configures settings from hibernate_rider_service.cfg.xml
-        // .build();
         try {
             sessionFactory = new Configuration().configure("hibernate_rider_service.cfg.xml").buildSessionFactory();
 
@@ -80,25 +75,6 @@ public class RiderManager {
         }
         return rider;
     }
-
-//    public Rider getRiderById(long id) {
-//        Session session = sessionFactory.openSession();
-//        Transaction tx = null;
-//        Rider rider = null;
-//        try {
-//            tx = session.beginTransaction();
-//            rider = (Rider) session.get(Rider.class, id);
-//            tx.commit();
-//        } catch (HibernateException e) {
-//            if (tx != null)
-//                tx.rollback();
-//            e.printStackTrace();
-//        } finally {
-//            session.close();
-//        }
-//
-//        return rider;
-//    }
 
     public static void main(String[] args) {
         // code to run the program

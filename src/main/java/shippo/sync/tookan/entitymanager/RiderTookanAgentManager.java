@@ -14,11 +14,6 @@ public class RiderTookanAgentManager {
     protected SessionFactory sessionFactory;
 
     public void setup() {
-        // code to load Hibernate Session factory
-        // final StandardServiceRegistry registry = new
-        // StandardServiceRegistryBuilder()
-        // .configure() // configures settings from hibernate_rider_service.cfg.xml
-        // .build();
         try {
             sessionFactory = new Configuration().configure("hibernate_rider_service.cfg.xml").buildSessionFactory();
 
@@ -121,18 +116,23 @@ public class RiderTookanAgentManager {
     }
 
     /* Method to UPDATE  for an tookan_agents */
-    public void updateRiderTookanAgent(Integer id, RiderTookanAgent changedAgent) {
+    public void updateRiderTookanAgent(Long id, RiderTookanAgent changedAgent) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
 
         try {
             tx = session.beginTransaction();
             RiderTookanAgent agent = (RiderTookanAgent) session.get(RiderTookanAgent.class, id);
-            agent.setAgent(changedAgent.getAgent());
-            agent.setAgentId(changedAgent.getAgentId());
-            agent.setRiderId(changedAgent.getRiderId());
-            agent.setUpdatedAt(changedAgent.getUpdatedAt());
-            agent.setVersion(changedAgent.getVersion());
+            if(changedAgent.getAgent() != null)
+                agent.setAgent(changedAgent.getAgent());
+            if(changedAgent.getAgentId() != null)
+                agent.setAgentId(changedAgent.getAgentId());
+            if(changedAgent.getRiderId() != null)
+                agent.setRiderId(changedAgent.getRiderId());
+            if(changedAgent.getUpdatedAt() != null)
+                agent.setUpdatedAt(changedAgent.getUpdatedAt());
+            if(changedAgent.getVersion() != null)
+                agent.setVersion(changedAgent.getVersion());
             session.update(agent);
             tx.commit();
         } catch (HibernateException e) {
@@ -147,22 +147,11 @@ public class RiderTookanAgentManager {
         // code to run the program
         RiderTookanAgentManager manager = new RiderTookanAgentManager();
         manager.setup();
-////        manager.readByRider(1);
-//
-//        RiderTookanAgent agent = new RiderTookanAgent();
-////        agent.setId(3);
-//        agent.setAgent("leviethoa");
-//        agent.setAgentId(31);
-//        agent.setRiderId(11);
-////        agent.setUpdatedAt(changedAgent.getUpdatedAt());
-//        agent.setVersion(0);
-//
-////        int a = manager.addRiderTookanAgent(agent);
-////        System.out.println("OK: " + a);
-//        manager.updateRiderTookanAgent(4, agent);
-//        System.out.println("OK!");
-        RiderTookanAgent rider = manager.readByRiderId(7);
-//        manager.readById(4);
+
+//        RiderTookanAgent rider = manager.readByRiderId(7);
+        RiderTookanAgent agent = new RiderTookanAgent();
+        agent.setVersion(0);
+        manager.updateRiderTookanAgent(5L, agent);
         manager.exit();
     }
 }

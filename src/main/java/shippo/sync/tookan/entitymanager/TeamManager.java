@@ -14,11 +14,7 @@ public class TeamManager {
     protected SessionFactory sessionFactory;
 
     public void setup() {
-        // code to load Hibernate Session factory
-        // final StandardServiceRegistry registry = new
-        // StandardServiceRegistryBuilder()
-        // .configure() // configures settings from hibernate_rider_service.cfg.xml
-        // .build();
+
         try {
             sessionFactory = new Configuration().configure("hibernate_rider_service.cfg.xml").buildSessionFactory();
 
@@ -81,8 +77,6 @@ public class TeamManager {
         // code to run the program
         TeamManager manager = new TeamManager();
         manager.setup();
-//        manager.readByTookanId(2);
-//        manager.readAll();
         manager.getTeamById(Long.parseLong("109"));
         manager.exit();
     }

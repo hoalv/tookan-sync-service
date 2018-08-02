@@ -96,9 +96,7 @@ public class TransportationTaskManager {
         // code to run the program
         TransportationTaskManager manager = new TransportationTaskManager();
         manager.setup();
-
         manager.readById(97712);
-//        manager.readById(4);
         manager.exit();
     }
 }
