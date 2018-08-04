@@ -156,7 +156,7 @@ public class TookanAgentParser extends SingleConsumer {
         tookanAgentInfo.setTransportDesc("");
         tookanAgentInfo.setLicense("");
         tookanAgentInfo.setColor("");
-        tookanAgentInfo.setName(tookanAgentInfo.getUserName());
+        tookanAgentInfo.setName(tookanAgentInfo.getFirstName() + "\\n" + tookanAgentInfo.getLastName());
         tookanAgentInfo.setFirstName(tookanAgentInfo.getFirstName() != null
                 ? tookanAgentInfo.getFirstName() : "");
         tookanAgentInfo.setLastName(tookanAgentInfo.getLastName() != null
