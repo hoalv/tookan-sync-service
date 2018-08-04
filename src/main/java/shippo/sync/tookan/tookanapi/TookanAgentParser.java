@@ -156,11 +156,14 @@ public class TookanAgentParser extends SingleConsumer {
         tookanAgentInfo.setTransportDesc("");
         tookanAgentInfo.setLicense("");
         tookanAgentInfo.setColor("");
-        tookanAgentInfo.setName(tookanAgentInfo.getFirstName() + "\\n" + tookanAgentInfo.getLastName());
-        tookanAgentInfo.setFirstName(tookanAgentInfo.getFirstName() != null
-                ? tookanAgentInfo.getFirstName() : "");
-        tookanAgentInfo.setLastName(tookanAgentInfo.getLastName() != null
-                ? tookanAgentInfo.getLastName() : "");
+        String firstName = tookanAgentInfo.getFirstName() != null
+                ? tookanAgentInfo.getFirstName() : "";
+        String lastName = tookanAgentInfo.getLastName() != null
+                ? tookanAgentInfo.getLastName() : "";
+
+        tookanAgentInfo.setFirstName(firstName);
+        tookanAgentInfo.setLastName(lastName);
+        tookanAgentInfo.setName(firstName + " " + tookanAgentInfo.getLastName());
 
 //        lay tookan_id tu bang team
         if (tookanAgentInfo.getTeamId() != null) {
