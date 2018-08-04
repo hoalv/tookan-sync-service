@@ -41,12 +41,14 @@ public class TookanAgentParser extends SingleConsumer {
 
             String rider_id = null;
             RiderManager riderManager = new RiderManager();
+            riderManager.setup();
             Rider rider = new Rider();
             if (agent.has("id"))
                 rider_id = String.valueOf(agent.get("id"));
             else {
                 rider_id = riderManager.getRiderByUserId(Long.parseLong(rider_id_in_tookan_agents)).getId() + "";
             }
+            riderManager.exit();
 
             switch (action) {
                 case CREATE: {
