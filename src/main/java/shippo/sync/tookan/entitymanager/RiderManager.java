@@ -97,9 +97,10 @@ public class RiderManager {
         // code to run the program
         RiderManager manager = new RiderManager();
         manager.setup();
-//        Rider rider = manager.getRiderById(1239);
-        manager.updateIsSyncTookan((long) 1239, false);
-//        System.out.println(rider.getEmail());
+        Rider rider = manager.getRiderByUserId(10112L);
+//        manager.updateIsSyncTookan((long) 1239, false);
+
+        System.out.println(rider.getEmail());
         manager.exit();
     }
 }

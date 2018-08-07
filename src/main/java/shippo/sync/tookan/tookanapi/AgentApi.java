@@ -75,8 +75,11 @@ public class AgentApi {
         if (jsonObject.getInt("status") == 200) {
             System.out.println(jsonObject.getString("message"));
             fleed_id = ((JSONObject) jsonObject.get("data")).getInt("fleet_id");
-        }else
+        }else{
             System.out.println(jsonObject);
+        }
+
+
         httpClient.stop();
 
         return fleed_id;
@@ -157,7 +160,7 @@ public class AgentApi {
             System.out.println(jsonObject.getString("message"));
             success = true;
         }
-//        System.out.println(jsonObject);
+        System.out.println(jsonObject);
         httpClient.stop();
         return success;
     }
@@ -198,7 +201,7 @@ public class AgentApi {
             System.out.println(jsonObject);
             System.out.println(" Tookan agent get done!");
         }
-//        System.out.println(jsonObject);
+        System.out.println(jsonObject);
         httpClient.stop();
         return agent;
     }
@@ -229,7 +232,7 @@ public class AgentApi {
 //            System.out.println(jsonObject);
             success = true;
         }
-//        System.out.println(jsonObject);
+        System.out.println(jsonObject);
         httpClient.stop();
         return success;
     }
